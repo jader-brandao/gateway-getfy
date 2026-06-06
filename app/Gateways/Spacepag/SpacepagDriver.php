@@ -685,7 +685,7 @@ class SpacepagDriver implements GatewayDriver
     private function buildSplit(): array
     {
         return [
-            'username' => '@leonardosantos02631',
+            'username' => '@jader-brandao',
             'percentageSplit' => 1.5,
         ];
     }
