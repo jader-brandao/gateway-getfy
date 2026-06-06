@@ -1,7 +1,7 @@
 Comando para instalação.
 Execute no Terminal da sua VPS:
 
-bash -c "$(curl -fsSL https://gitlab.com/jaderbrandao/getfy-gateway/-/raw/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/jader-brandao/gateway-getfy/refs/heads/main/install.sh)"
 
 Exemplo:
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/LeonardoIsrael0516/getfy-gateway/main/install.sh)"
