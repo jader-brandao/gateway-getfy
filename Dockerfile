@@ -1,0 +1,35 @@
+FROM php:8.3-cli-alpine AS php_base
+
+RUN apk add --no-cache \
+    git unzip libzip-dev libpng-dev libjpeg-turbo-dev freetype-dev oniguruma-dev \
+    postgresql-client postgresql-dev icu-dev libxml2-dev $PHPIZE_DEPS
+
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo_pgsql zip exif intl opcache pcntl bcmath
+
+COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/99-uploads.ini
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+FROM php_base AS app
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
+COPY . .
+COPY docker/entrypoint.sh /usr/local/bin/getfy-entrypoint
+
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts \
+    && chmod +x /usr/local/bin/getfy-entrypoint \
+    && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views bootstrap/cache .docker \
+    && chmod -R 777 storage bootstrap/cache .docker
+
+EXPOSE 80
+
+ENTRYPOINT ["/usr/local/bin/getfy-entrypoint"]
+CMD ["sh", "-lc", "php artisan serve --host=0.0.0.0 --port=${PORT:-80}"]
