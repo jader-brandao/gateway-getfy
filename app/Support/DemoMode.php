@@ -225,6 +225,6 @@ class DemoMode
             return $name.' ('.$email.')';
         }
 
-        return $email !== '' ? $email : $name ?: null;
+        return $email !== '' ? $email : ($name ?: null);
     }
 }
